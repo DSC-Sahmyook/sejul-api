@@ -2,6 +2,11 @@
 
 삼육대학교 DSC 프로젝트 1팀의 API 서버 입니다.
 
+## 실행 방법
+
+-   `yarn run start` : 빌드된 항목을 실행합니다. `production` 모드로 실행 됩니다.
+-   `yarn run dev` : 개발 서버를 실행합니다. `development` 모드로 실행 됩니다.
+
 ## 사용된 기술
 
 -   [x] nodejs
