@@ -6,7 +6,10 @@ import * as logger from "morgan";
 
 import { Application } from "express";
 
+import * as UTILS from "./utils";
 import * as passport from "passport";
+
+import userRoutes from "./routes/user.routes";
 
 export class App {
     private app: Application;
@@ -42,25 +45,18 @@ export class App {
     }
 
     private async db() {
-        // return await UTILS.DB.Connector.init();
+        return await UTILS.DB.Connector.init();
     }
 
     private auth() {
-        // this.app.use(passport.initialize());
+        this.app.use(passport.initialize());
         // JWT를 사용할 예정이라 세션은 필요없음
         // this.app.use(passport.session());
-        // UTILS.PASSPORT(passport);
+        UTILS.PASSPORT(passport);
     }
 
     private routes() {
-        // this.app.use("/api/auth", authRoutes);
-        // this.app.use("/api/artist", artistRoutes);
-        // this.app.use("/api/work", workRoutes);
-        // this.app.use("/api/exhibition", exhibitionRoutes);
-        // this.app.use("/api/gallery", galleryRoutes);
-        // this.app.use("/api/genre", genreRoutes);
-        // this.app.use("/api/hashtag", hashtagRoutes);
-        // this.app.use("/api/user", userRoutes);
+        this.app.use("/api/user", userRoutes);
 
         this.app.use((req, res) => {
             // 404 ERROR
