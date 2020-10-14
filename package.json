@@ -6,7 +6,8 @@
     "license": "MIT",
     "scripts": {
         "start": "tsc && nodemon dist/index.js",
-        "dev": "concurrently --kill-others \"tsc -w\" \"nodemon dist/index.js\""
+        "dev": "concurrently --kill-others \"tsc -w\" \"nodemon dist/index.js\"",
+        "inf": "rm -rf ../sejul-client/src/api/interfaces && cp -R ./src/interfaces ../sejul-client/src/api/interfaces"
     },
     "dependencies": {
         "@types/bcrypt": "^3.0.0",
