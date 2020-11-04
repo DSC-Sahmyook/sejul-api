@@ -17,7 +17,7 @@ router.put("/:username", Middlewares.Auth.isItself, UserController.editUser);
 router.delete(
     "/:username",
     Middlewares.Auth.isItself,
-    UserController.deleteUser
+    UserController.deleteUser 
 );
 
 export default router;

@@ -10,6 +10,7 @@ import * as UTILS from "./utils";
 import * as passport from "passport";
 
 import userRoutes from "./routes/user.routes";
+import authRoutes from "./routes/auth.routes";
 
 export class App {
     private app: Application;
@@ -57,6 +58,7 @@ export class App {
 
     private routes() {
         this.app.use("/api/user", userRoutes);
+        this.app.use("/auth", authRoutes);
 
         this.app.use((req, res) => {
             // 404 ERROR
