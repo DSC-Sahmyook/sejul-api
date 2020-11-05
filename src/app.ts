@@ -57,6 +57,8 @@ export class App {
     }
 
     private routes() {
+        // 라우팅 해주는 곳
+        // localhost:3000/api/user
         this.app.use("/api/user", userRoutes);
         this.app.use("/auth", authRoutes);
 
