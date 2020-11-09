@@ -1,6 +1,8 @@
 import { ICollection } from "./ICollection";
 import { IArticle } from "./IArticle";
 import { IUser } from "./IUser";
+import { IView } from "./IView";
+import { IRate } from "./IRate";
 
 /**
  * Author       : 유경수
@@ -16,19 +18,8 @@ export interface ISummary extends ICollection {
         start: Date; // 시작일자
         finish: Date; // 종료일자
     };
-    views: [
-        // 조회수
-        {
-            user: IUser; // 조회 사용자
-            viewDate: Date; // 조회 일자
-        }
-    ];
-    rates: [
-        // 평점
-        {
-            score: Number; // 점수
-            user: IUser; // 평점 사용자
-            rateDate: Date; // 평점 일자
-        }
-    ];
+    // 글 조회 정보
+    views: [IView];
+    // 글 평가 정보
+    rates: [IRate];
 }

@@ -1,9 +1,17 @@
 import * as mongoose from "mongoose";
+import { ISummary } from "../../../interfaces";
 
 const SummarySchema = new mongoose.Schema({
     article: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Article",
+        // 기사 제목
+        title: { type: String, require: true },
+        // 네이버 기준 링크
+        link: { type: String, require: true },
+        // 언론사 기준 링크
+        originalLink: {
+            type: String,
+            require: true,
+        },
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -48,6 +56,10 @@ const SummarySchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
-export const Summary = mongoose.model("Summary", SummarySchema);
+export const Summary = mongoose.model<ISummary>("Summary", SummarySchema);

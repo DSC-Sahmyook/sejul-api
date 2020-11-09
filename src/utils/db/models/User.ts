@@ -1,5 +1,6 @@
 import * as mongoose from "mongoose";
 import * as passportLocalMongoose from "passport-local-mongoose";
+import { IUser } from "../../../interfaces";
 
 export const UserSchema = new mongoose.Schema({
     // 사용자 이메일
@@ -23,27 +24,10 @@ export const UserSchema = new mongoose.Schema({
         google: String,
         naver: String,
     },
-    // 관심 키워드
-    keywords: [String],
     // 팔로잉 유저
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    interestPress: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Press",
-        },
-    ],
     // 관심 카테고리
-    interestCategories: [
-        { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-    ],
-    // 비관심 카테고리
-    notInterestCategories: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Category",
-        },
-    ],
+    interestHashtag: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hashtag" }],
     // 삭제 여부
     isDeleted: {
         type: Boolean,
@@ -59,8 +43,12 @@ export const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 UserSchema.plugin(passportLocalMongoose, { usernameField: "email" });
 
-export const User = mongoose.model("User", UserSchema);
+export const User = mongoose.model<IUser>("User", UserSchema);

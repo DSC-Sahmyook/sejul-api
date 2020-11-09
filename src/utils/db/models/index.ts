@@ -1,7 +1,5 @@
 import { User } from "./User";
-import { Article } from "./Article";
-import { Category } from "./Category";
-import { Press } from "./Press";
 import { Summary } from "./Summary";
+import { Hashtag } from "./Hashtag";
 
-export { User, Article, Category, Press, Summary };
+export { User, Summary, Hashtag };
