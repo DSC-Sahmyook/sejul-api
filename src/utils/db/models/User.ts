@@ -26,8 +26,8 @@ export const UserSchema = new mongoose.Schema({
     },
     // 팔로잉 유저
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    // 관심 카테고리
-    interestHashtag: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hashtag" }],
+    // 관심 해시태그
+    hashtag: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hashtag" }],
     // 삭제 여부
     isDeleted: {
         type: Boolean,

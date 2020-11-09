@@ -1,14 +1,16 @@
+/**
+ * Author       : 유경수
+ * Created Date : 2020-11-09
+ * Description  : 유저 정보 조회 및 수정 관련
+ * History
+ * -
+ */
 import { Request, Response } from "express";
-import * as passport from "passport";
 import * as Models from "../utils/db/models";
 import * as Utility from "../utils";
 import * as bcrypt from "bcrypt";
 
 const env = Utility.ENV();
-
-export const index = (req: Request, res: Response) => {
-    res.send("Hello");
-};
 
 /**
  * @description 사용자 정보 가져오기

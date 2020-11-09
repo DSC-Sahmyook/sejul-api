@@ -19,6 +19,6 @@ export interface IUser extends ICollection {
     };
     following: [IUser]; // 내가 팔로우 중인 유저
     follower: [IUser]; // 나를 팔로우 중인 유저
-    interestHashtags: [IHashtag]; // 내가 관심 가진 분야
+    hashtags: [IHashtag]; // 내가 관심 가진 분야
     isAdmin: Boolean; // 관리자 여부
 }

@@ -9,8 +9,10 @@ import { Application } from "express";
 import * as UTILS from "./utils";
 import * as passport from "passport";
 
-import userRoutes from "./routes/user.routes";
-import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.route";
+import authRoutes from "./routes/auth.route";
+import summaryRoutes from "./routes/summary.route";
+import analysisRoutes from "./routes/analysis.route";
 
 export class App {
     private app: Application;
@@ -59,8 +61,10 @@ export class App {
     private routes() {
         // 라우팅 해주는 곳
         // localhost:3000/api/user
+        this.app.use("/api/auth", authRoutes);
         this.app.use("/api/user", userRoutes);
-        this.app.use("/auth", authRoutes);
+        this.app.use("/api/analysis", analysisRoutes);
+        this.app.use("/api/summary", summaryRoutes);
 
         this.app.use((req, res) => {
             // 404 ERROR

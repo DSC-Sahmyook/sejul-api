@@ -1,6 +1,7 @@
 import { IUser } from "./IUser";
 
 export interface IView {
-    user: IUser; // 조회 사용자
+    ip: string | String; // 조회 아이피
     viewDate: Date; // 조회 일자
+    user: IUser;
 }

@@ -3,6 +3,7 @@ import { IArticle } from "./IArticle";
 import { IUser } from "./IUser";
 import { IView } from "./IView";
 import { IRate } from "./IRate";
+import { IHashtag } from "./IHashtag";
 
 /**
  * Author       : 유경수
@@ -22,4 +23,6 @@ export interface ISummary extends ICollection {
     views: [IView];
     // 글 평가 정보
     rates: [IRate];
+    // 해시태그
+    hashtags: [IHashtag];
 }
