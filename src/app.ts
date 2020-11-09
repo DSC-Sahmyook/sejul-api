@@ -13,6 +13,7 @@ import userRoutes from "./routes/user.route";
 import authRoutes from "./routes/auth.route";
 import summaryRoutes from "./routes/summary.route";
 import analysisRoutes from "./routes/analysis.route";
+import tempRoutes from "./routes/temp.route";
 
 export class App {
     private app: Application;
@@ -65,6 +66,7 @@ export class App {
         this.app.use("/api/user", userRoutes);
         this.app.use("/api/analysis", analysisRoutes);
         this.app.use("/api/summary", summaryRoutes);
+        this.app.use("/api/temp", tempRoutes);
 
         this.app.use((req, res) => {
             // 404 ERROR
