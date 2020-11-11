@@ -5,10 +5,15 @@ import { Auth } from "../middlewares";
 
 const router = Router();
 
-// 글 상세 조회하기
-router.get("/:summary_id", SummaryController.fetchDetail);
 // 글 상세 목록 조회하기
 router.get("/", SummaryController.fetchAll);
+
+// 특정 유저 글 조회하기
+router.get("/user/:username", SummaryController.fetchRelatedUser);
+
+// 글 상세 조회하기
+router.get("/:summary_id", SummaryController.fetchDetail);
+
 // 글 생성하기
 router.post("/", Auth.isAuthenticated, SummaryController.create);
 // 글 수정하기

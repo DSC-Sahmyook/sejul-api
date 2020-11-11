@@ -57,6 +57,21 @@ export const fetchDetail = async (req: Request, res: Response) => {
     }
 };
 
+export const fetchRelatedUser = async (req: Request, res: Response) => {
+    try {
+        const { username } = req.params;
+        const { page, cnt } = req.query;
+        // 코드 작성
+    } catch (e) {
+        const _error: IAPIError = {
+            displayMessage: "조회 중 오류가 발생했습니다",
+            message: e.message,
+            error: e,
+        };
+        res.status(500).json(_error);
+    }
+};
+
 /**
  * @description 요약 글 목록 조회하기
  * @query page 글 페이지
