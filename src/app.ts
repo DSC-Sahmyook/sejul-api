@@ -35,6 +35,9 @@ export class App {
     }
 
     private async settings() {
+        this.port =
+            process.env.PORT ||
+            (process.env.NODE_ENV === "production" ? 80 : 3000);
         this.app.set("port", process.env.PORT || this.port || 3000);
     }
 
