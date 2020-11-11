@@ -5,6 +5,7 @@ import * as Middlewares from "../middlewares";
 const router = Router();
 
 // 유저 정보 가져오기
+router.get("/", Middlewares.Auth.isAuthenticated, UserController.info);
 router.get("/:username", Middlewares.Auth.isAuthenticated, UserController.info);
 
 // 유저 패스워드 수정
