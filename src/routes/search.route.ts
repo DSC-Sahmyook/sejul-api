@@ -3,6 +3,7 @@ import { SearchController } from "../controllers";
 
 const router = Router();
 
-router.get("/", SearchController.search);
+router.get("/article", SearchController.searchInArticle);
+router.get("/summary", SearchController.searchInSummary);
 
 export default router;

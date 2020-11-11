@@ -6,7 +6,10 @@ import { IAPIError } from "../interfaces";
 
 const env = ENV();
 
-export const search = async (req: Request, res: Response) => {
+/**
+ * @description 기사를 검색하는 API
+ */
+export const searchInArticle = async (req: Request, res: Response) => {
     try {
         const { search, page = 1, cnt = 10 } = req.query;
         const response = await Axios({
@@ -23,6 +26,23 @@ export const search = async (req: Request, res: Response) => {
             },
         });
         res.json(response.data);
+    } catch (e) {
+        const _error: IAPIError = {
+            displayMessage: "조회 중 오류가 발생했습니다",
+            message: e.message,
+            error: e,
+        };
+        res.status(500).json(_error);
+    }
+};
+
+/**
+ * @description 요약 글을 검색하는 API
+ */
+export const searchInSummary = async (req: Request, res: Response) => {
+    try {
+        // 코드 작성 부
+        const { search, page = 1, cnt = 10 } = req.query;
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",
