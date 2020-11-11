@@ -102,6 +102,7 @@ export const create = async (req: Request, res: Response) => {
             content,
             timestampStartDt,
             timestampFinishDt,
+            hashtags,
         } = req.body;
 
         // 1. 제목 확인
@@ -155,6 +156,7 @@ export const create = async (req: Request, res: Response) => {
                 start: moment(timestampStartDt).toDate(),
                 finish: moment(timestampFinishDt).toDate(),
             },
+            hashtags: hashtags || [],
         });
 
         newSummary.save();

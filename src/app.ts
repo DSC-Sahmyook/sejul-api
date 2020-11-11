@@ -14,6 +14,7 @@ import authRoutes from "./routes/auth.route";
 import summaryRoutes from "./routes/summary.route";
 import analysisRoutes from "./routes/analysis.route";
 import hashtagRoutes from "./routes/hashtag.route";
+import searchRoutes from "./routes/search.route";
 import tempRoutes from "./routes/temp.route";
 
 export class App {
@@ -68,6 +69,7 @@ export class App {
         this.app.use("/api/analysis", analysisRoutes);
         this.app.use("/api/summary", summaryRoutes);
         this.app.use("/api/hashtag", hashtagRoutes);
+        this.app.use("/api/search", searchRoutes);
         this.app.use("/api/temp", tempRoutes);
 
         this.app.use((req, res) => {
