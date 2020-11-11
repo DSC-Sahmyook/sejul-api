@@ -7,7 +7,7 @@
     "scripts": {
         "compile": "tsc",
         "start": "export NODE_ENV=production && nodemon dist/index.js",
-        "dev": "concurrently --kill-others \"tsc -w\" \"nodemon dist/index.js\"",
+        "dev": "export NODE_ENV=development && concurrently --kill-others \"tsc -w\" \"nodemon dist/index.js\"",
         "inf": "rm -rf ../sejul-client/src/api/interfaces && cp -R ./src/interfaces ../sejul-client/src/api/interfaces"
     },
     "dependencies": {
