@@ -5,12 +5,38 @@
  * History
  * -
  */
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import * as Models from "../utils/db/models";
 import * as Utility from "../utils";
 import * as bcrypt from "bcrypt";
 
 const env = Utility.ENV();
+
+export const uploadProfileImage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    if (!req.gcpImgUrl) {
+        res.status(500).json({
+            message: "이미지 업로드 중 오류가 발생했습니다",
+        });
+        return;
+    }
+    try {
+        req.user.profile = req.gcpImgUrl;
+        req.user.lastUpdatedDate = new Date();
+        await req.user.save();
+        res.status(200).json({
+            message: "이미지가 업로드 되었습니다",
+        });
+    } catch (e) {
+        res.status(500).json({
+            message: "오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
 
 /**
  * @description 사용자 정보 가져오기

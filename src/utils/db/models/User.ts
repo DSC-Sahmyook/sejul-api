@@ -24,6 +24,7 @@ export const UserSchema = new mongoose.Schema({
         google: String,
         naver: String,
     },
+    profile: String,
     // 팔로잉 유저
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     // 관심 해시태그

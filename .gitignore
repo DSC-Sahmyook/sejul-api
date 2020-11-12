@@ -11,3 +11,6 @@ yarn-error.log
 
 # 빌드 결과 
 dist/
+
+# 인증 관련 파일
+secure/
