@@ -25,6 +25,7 @@ export const uploadProfileImage = async (
     }
     try {
         req.user.profile = req.gcpImgUrl;
+        req.user.lastUpdatedDate = new Date();
         await req.user.save();
         res.status(200).json({
             message: "이미지가 업로드 되었습니다",
