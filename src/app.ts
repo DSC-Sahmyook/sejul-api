@@ -16,6 +16,7 @@ import analysisRoutes from "./routes/analysis.route";
 import hashtagRoutes from "./routes/hashtag.route";
 import searchRoutes from "./routes/search.route";
 import tempRoutes from "./routes/temp.route";
+import * as path from "path";
 
 export class App {
     private app: Application;
@@ -39,6 +40,12 @@ export class App {
             process.env.PORT ||
             (process.env.NODE_ENV === "production" ? 80 : 3000);
         this.app.set("port", process.env.PORT || this.port || 3000);
+
+        process.env.GOOGLE_APPLICATION_CREDENTIALS = `${process.cwd()}/secure/carbide-acre-295302-d9592638e072.json`;
+        console.log(
+            "google authentication installed at",
+            process.env["GOOGLE_APPLICATION_CREDENTIALS"]
+        );
     }
 
     private middleware() {
