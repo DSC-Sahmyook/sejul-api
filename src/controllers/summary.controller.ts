@@ -57,11 +57,38 @@ export const fetchDetail = async (req: Request, res: Response) => {
     }
 };
 
+<<<<<<< Updated upstream
+=======
+/**
+ * @description 유저별 요약 글 조회하기
+ * @param username 유저이름
+ * @param userObjectID 유저 ObjectID
+ * @param page 글 페이지
+ * @param cnt 글 조회 갯수
+ */
+>>>>>>> Stashed changes
 export const fetchRelatedUser = async (req: Request, res: Response) => {
     try {
         const { username } = req.params;
         const { page, cnt } = req.query;
+<<<<<<< Updated upstream
         // 코드 작성
+=======
+        
+        // 유저 ObjectID 가져오기
+        const userObjectID = (
+            await Models.User.findOne({
+            username: username
+            })
+        )._id;
+        
+        // 해당 유저의 글 조회
+        const result = await Models.Summary.find({
+            user: userObjectID 
+        });
+        
+        res.status(200).json(result);
+>>>>>>> Stashed changes
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",
