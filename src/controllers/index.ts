@@ -4,6 +4,7 @@ import * as AnalysisController from "./analysis.controller";
 import * as AuthController from "./auth.controller";
 import * as HashtagController from "./hashtag.controller";
 import * as SearchController from "./search.controller";
+import * as ArticleController from "./article.controller";
 
 export {
     UserController,
@@ -12,4 +13,5 @@ export {
     SummaryController,
     HashtagController,
     SearchController,
+    ArticleController,
 };

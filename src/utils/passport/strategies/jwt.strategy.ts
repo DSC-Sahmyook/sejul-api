@@ -18,7 +18,6 @@ export default new Strategy(
             });
             return done(null, user);
         } catch (e) {
-            // console.log(e);
             return done(e);
         }
     }

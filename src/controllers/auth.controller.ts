@@ -17,8 +17,9 @@ import {
     comparePassword,
     isEmpty,
 } from "../utils/validator";
-import { Document, Error } from "mongoose";
+import { Document, Error, Model } from "mongoose";
 import { IUser } from "../interfaces";
+import { IKakaoStrategyInfo } from "../utils/passport/strategies/kakao.strategy";
 
 const env = createEnv();
 
@@ -109,7 +110,7 @@ export const signin = (req: Request, res: Response, next: Function) => {
                         env.get("JWT_SECRET"),
                         {
                             expiresIn: "7d",
-                            issuer: "OldRookie",
+                            issuer: "DSC-Sahmyook",
                             subject: "user-info",
                         }
                     );
@@ -119,6 +120,150 @@ export const signin = (req: Request, res: Response, next: Function) => {
                     });
                 }
             });
+        }
+    )(req, res, next);
+};
+
+export const kakaoCallback = (req: Request, res: Response, next: Function) => {
+    passport.authenticate(
+        "kakao",
+        { session: false },
+        async (err: Error, user: IUser, info: IKakaoStrategyInfo) => {
+            if (err) {
+                res.status(500).json({
+                    message: "오류가 발생했습니다",
+                    error: err.message,
+                });
+                return;
+            }
+            if (user) {
+                // 로그인 성공
+                req.login(user, { session: false }, (err) => {
+                    if (err) {
+                        return res.status(500).json({
+                            message: "오류가 발생했습니다",
+                            error: err.message,
+                        });
+                    } else {
+                        const _user: IUser = user.toJSON();
+                        const token = jsonwebtoken.sign(
+                            {
+                                _id: _user._id,
+                            },
+                            env.get("JWT_SECRET"),
+                            {
+                                expiresIn: "7d",
+                                issuer: "DSC-Sahmyook",
+                                subject: "user-info",
+                            }
+                        );
+                        return res.status(200).json({
+                            message: "로그인이 성공했습니다",
+                            token,
+                        });
+                    }
+                });
+            } else {
+                // 로그인 실패
+                if (req.user) {
+                    // 기존 로그인 정보가 있는 경우
+                    // 카카오 정보를 추가함
+                    req.user.tokens.kakao = info.profile.id;
+                    const updated = await req.user.save();
+
+                    req.login(updated, { session: false }, (err) => {
+                        if (err) {
+                            return res.status(500).json({
+                                message: "오류가 발생했습니다",
+                                error: err.message,
+                            });
+                        } else {
+                            const _user: IUser = updated.toJSON();
+                            const token = jsonwebtoken.sign(
+                                {
+                                    _id: _user._id,
+                                },
+                                env.get("JWT_SECRET"),
+                                {
+                                    expiresIn: "7d",
+                                    issuer: "DSC-Sahmyook",
+                                    subject: "user-info",
+                                }
+                            );
+                            return res.status(200).json({
+                                message: "로그인이 성공했습니다",
+                                token,
+                            });
+                        }
+                    });
+                } else {
+                    if (info.profile._json.kakao_account.has_email) {
+                        const saltRound = Number(env.get("HASH_SALT_ROUND"));
+                        const salt = bcrypt.genSaltSync(saltRound);
+                        const hashed = bcrypt.hashSync(
+                            `${info.profile.id}${new Date().getTime()}`,
+                            salt
+                        );
+
+                        const existUser = await Models.User.findOne({
+                            email: info.profile._json.kakao_account.email,
+                        });
+
+                        let signingUser;
+                        let signingMessage;
+
+                        if (existUser) {
+                            existUser.tokens.kakao = info.profile.id;
+                            signingUser = await existUser.save();
+                            signingMessage =
+                                "기존 계정과 연결되고 로그인되었습니다";
+                        } else {
+                            const newUser = new Models.User({
+                                email: info.profile._json.kakao_account.email,
+                                password: hashed,
+                                username: info.profile.displayName,
+                                tokens: {
+                                    kakao: info.profile.id,
+                                },
+                            });
+                            signingUser = await newUser.save();
+                            signingMessage =
+                                "새로운 계정을 만들고 로그인되었습니다";
+                        }
+
+                        req.login(signingUser, { session: false }, (err) => {
+                            if (err) {
+                                return res.status(500).json({
+                                    message: "오류가 발생했습니다",
+                                    error: err.message,
+                                });
+                            } else {
+                                const _user: IUser = signingUser.toJSON();
+                                const token = jsonwebtoken.sign(
+                                    {
+                                        _id: _user._id,
+                                    },
+                                    env.get("JWT_SECRET"),
+                                    {
+                                        expiresIn: "7d",
+                                        issuer: "DSC-Sahmyook",
+                                        subject: "user-info",
+                                    }
+                                );
+                                return res.status(200).json({
+                                    message: signingMessage,
+                                    token,
+                                });
+                            }
+                        });
+                    } else {
+                        res.status(400).json({
+                            message:
+                                "이메일이 반드시 필요합니다. 다시 시도해주세요",
+                        });
+                    }
+                }
+            }
         }
     )(req, res, next);
 };
