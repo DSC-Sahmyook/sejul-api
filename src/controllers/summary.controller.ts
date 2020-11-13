@@ -67,7 +67,8 @@ export const fetchDetail = async (req: Request, res: Response) => {
 export const fetchRelatedUser = async (req: Request, res: Response) => {
     try {
         const { username } = req.params;
-        const { page, cnt } = req.query;
+        const page = Number(req.query.page) || 1;
+        const cnt = Number(req.query.cnt) || 15;
         
         // 유저 ObjectID 가져오기
         const userObjectID = (
@@ -77,9 +78,20 @@ export const fetchRelatedUser = async (req: Request, res: Response) => {
         )._id;
         
         // 해당 유저의 글 조회
-        const result = await Models.Summary.find({
-            user: userObjectID 
-        });
+        const result = await Models.Summary.aggregate([
+            {
+                $match: { user: userObjectID }
+            },
+            {
+                $sort: { createdAt: -1 },
+            },
+            {
+                $skip: cnt * (page - 1),
+            },
+            {
+                $limit: cnt,
+            },
+        ]);
         
         res.status(200).json(result);
     } catch (e) {
@@ -101,6 +113,7 @@ export const fetchAll = async (req: Request, res: Response) => {
     try {
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
+
         const result = await Models.Summary.aggregate([
             {
                 $sort: { createdAt: -1 },
