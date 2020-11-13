@@ -29,6 +29,20 @@ export const UserSchema = new mongoose.Schema({
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     // 관심 해시태그
     hashtag: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hashtag" }],
+    // 추가한 기사,
+    articles: [
+        {
+            // 기사 제목
+            title: { type: String, require: true },
+            // 네이버 기준 링크
+            link: { type: String, require: true },
+            // 언론사 기준 링크
+            originalLink: {
+                type: String,
+                require: true,
+            },
+        },
+    ],
     // 삭제 여부
     isDeleted: {
         type: Boolean,

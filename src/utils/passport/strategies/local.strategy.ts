@@ -2,10 +2,6 @@ import { Strategy } from "passport-local";
 import * as Models from "../../db/models";
 import * as bcrypt from "bcrypt";
 
-import * as UTILS from "../../../utils";
-
-const env = UTILS.ENV();
-
 export default new Strategy(
     {
         usernameField: "email",
@@ -13,7 +9,6 @@ export default new Strategy(
     },
     async (email: string, password: string, cb: Function) => {
         try {
-            console.log("in strategy");
             const user = await Models.User.findOne({
                 email: email,
             });
