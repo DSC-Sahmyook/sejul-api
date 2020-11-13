@@ -76,9 +76,10 @@ export const fetchRelatedUser = async (req: Request, res: Response) => {
             username: username
             })
         )._id;
-        
-        // 해당 유저의 글 조회
-        const result = await Models.Summary.aggregate([
+
+        if (userObjectID) {
+            // 해당 유저의 글 조회
+            const result = await Models.Summary.aggregate([
             {
                 $match: { user: userObjectID }
             },
@@ -91,9 +92,13 @@ export const fetchRelatedUser = async (req: Request, res: Response) => {
             {
                 $limit: cnt,
             },
-        ]);
-        
-        res.status(200).json(result);
+            ]);
+    
+            res.status(200).json(result);
+        } else {
+            throw new Error("글이 존재하지 않습니다");
+        }
+
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",
