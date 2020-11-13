@@ -6,6 +6,8 @@ import { IUser } from "../../interfaces";
 export default (_passport: passport.PassportStatic) => {
     _passport.use(Strategies.local);
     _passport.use(Strategies.jwt);
+    _passport.use(Strategies.kakao);
+
     _passport.serializeUser((user: IUser, done) => {
         // done(null, user);
         done(null, user._id);

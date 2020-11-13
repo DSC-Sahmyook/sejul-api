@@ -50,7 +50,6 @@ export const uploadImage = async (
 
     // 에러 핸들링
     blobStream.on("error", (err) => {
-        console.log("?");
         res.status(500).json({
             message: "업로드 중 오류가 발생했습니다",
             error: JSON.parse(JSON.stringify(err)),

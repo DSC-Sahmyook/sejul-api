@@ -12,6 +12,10 @@ import * as bcrypt from "bcrypt";
 
 const env = Utility.ENV();
 
+/**
+ * @description 프로필 이미지 업로드
+ * @author 유경수
+ */
 export const uploadProfileImage = async (
     req: Request,
     res: Response,
@@ -37,6 +41,8 @@ export const uploadProfileImage = async (
         });
     }
 };
+
+//#region 사용자 정보 수정
 
 /**
  * @description 사용자 정보 가져오기
@@ -177,3 +183,4 @@ export const deleteUser = async (req: Request, res: Response) => {
         });
     }
 };
+//#endregion

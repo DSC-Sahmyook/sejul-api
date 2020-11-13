@@ -6,6 +6,9 @@ const router = Router();
 // 로그인
 router.post("/signin", controllers.signin);
 
+router.get("/kakao/signin", passport.authenticate("kakao"));
+router.get("/kakao/callback", controllers.kakaoCallback);
+
 // 회원 가입
 router.post("/signup", controllers.signup);
 

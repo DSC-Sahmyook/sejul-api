@@ -15,8 +15,7 @@ import summaryRoutes from "./routes/summary.route";
 import analysisRoutes from "./routes/analysis.route";
 import hashtagRoutes from "./routes/hashtag.route";
 import searchRoutes from "./routes/search.route";
-import tempRoutes from "./routes/temp.route";
-import * as path from "path";
+import articleRoutes from "./routes/article.route";
 
 export class App {
     private app: Application;
@@ -80,7 +79,7 @@ export class App {
         this.app.use("/api/summary", summaryRoutes);
         this.app.use("/api/hashtag", hashtagRoutes);
         this.app.use("/api/search", searchRoutes);
-        this.app.use("/api/temp", tempRoutes);
+        this.app.use("/api/article", articleRoutes);
 
         this.app.use((req, res) => {
             // 404 ERROR
