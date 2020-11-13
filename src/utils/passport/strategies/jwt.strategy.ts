@@ -5,6 +5,7 @@ import customEnv from "../../env";
 import { IUser } from "../../../interfaces";
 const _env = customEnv();
 
+
 export default new Strategy(
     {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

@@ -9,8 +9,9 @@ const __ENV_PATH = {
 export default () => {
     try {
         dotenv.config({
-            path: __ENV_PATH[__NODE_ENV],
+            path: __ENV_PATH[__NODE_ENV.trim()],
         });
+
 
         return {
             get: (name: string): any => {

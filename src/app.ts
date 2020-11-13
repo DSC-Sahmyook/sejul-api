@@ -27,6 +27,7 @@ export class App {
         this.auth();
         this.middleware();
         this.routes();
+        
     }
 
     public async listen() {
