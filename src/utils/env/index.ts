@@ -2,8 +2,8 @@ import * as dotenv from "dotenv";
 
 const __NODE_ENV = process.env.NODE_ENV || "development";
 const __ENV_PATH = {
-    production: `./production.env`,
-    development: `./development.env`,
+    production: `${process.cwd()}/production.env`,
+    development: `${process.cwd()}/development.env`,
 };
 
 export default () => {
