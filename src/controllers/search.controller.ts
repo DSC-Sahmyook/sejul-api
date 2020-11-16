@@ -44,12 +44,14 @@ export const searchInArticle = async (req: Request, res: Response) => {
 export const searchInSummary = async (req: Request, res: Response) => {
     try {
         // 코드 작성 부
-        const { search, page = 1, cnt = 10 } = req.query;
-        
+        const { search = "", page = 1, cnt = 10 } = req.query;
+
         const result = await Models.Summary.find({
-             content : {$regex: ""+search}
-        }).limit(10);
-        
+            content: { $regex: `${search}` },
+        })
+            .limit(10)
+            .populate("user");
+
         res.json(result);
         //res.status(200).json(result);
     } catch (e) {
