@@ -3,6 +3,8 @@ import * as Models from "../utils/db/models";
 import { ENV } from "../utils";
 import Axios from "axios";
 import { IAPIError } from "../interfaces";
+//추가
+import { IView } from "../interfaces";
 
 const env = ENV();
 
@@ -43,6 +45,13 @@ export const searchInSummary = async (req: Request, res: Response) => {
     try {
         // 코드 작성 부
         const { search, page = 1, cnt = 10 } = req.query;
+        
+        const result = await Models.Summary.find({
+             content : {$regex: ""+search}
+        }).limit(10);
+        
+        res.json(result);
+        //res.status(200).json(result);
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",

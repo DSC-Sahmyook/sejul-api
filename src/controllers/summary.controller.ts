@@ -245,7 +245,6 @@ export const remove = async (req: Request, res: Response) => {
                         isDeleted: true,
                     }
                 );
-
                 res.json({
                     message: "삭제되었습니다",
                     result: result,
