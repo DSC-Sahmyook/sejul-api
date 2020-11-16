@@ -12,7 +12,7 @@ import * as passport from "passport";
 import userRoutes from "./routes/user.route";
 import authRoutes from "./routes/auth.route";
 import summaryRoutes from "./routes/summary.route";
-import analysisRoutes from "./routes/analysis.route";
+import analyticsRoutes from "./routes/analytics.route";
 import hashtagRoutes from "./routes/hashtag.route";
 import searchRoutes from "./routes/search.route";
 import articleRoutes from "./routes/article.route";
@@ -27,7 +27,6 @@ export class App {
         this.auth();
         this.middleware();
         this.routes();
-        
     }
 
     public async listen() {
@@ -76,7 +75,7 @@ export class App {
         // localhost:3000/api/user
         this.app.use("/api/auth", authRoutes);
         this.app.use("/api/user", userRoutes);
-        this.app.use("/api/analysis", analysisRoutes);
+        this.app.use("/api/analytics", analyticsRoutes);
         this.app.use("/api/summary", summaryRoutes);
         this.app.use("/api/hashtag", hashtagRoutes);
         this.app.use("/api/search", searchRoutes);
