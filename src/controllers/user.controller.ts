@@ -184,3 +184,55 @@ export const deleteUser = async (req: Request, res: Response) => {
     }
 };
 //#endregion
+
+// 특정 유저가 팔로우 중인 사용자와 작성 글
+
+export const fetchFollowingUserAndSummaries = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
+
+export const fetchFollowingHashtagAndSummaries = async (
+    req: Request,
+    res: Response
+) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
+
+export const followUser = async (req: Request, res: Response) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
+
+export const unFollowUser = async (req: Request, res: Response) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};

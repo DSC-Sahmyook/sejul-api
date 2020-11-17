@@ -1,4 +1,4 @@
-import { IArticle } from ".";
+import { IArticle, ISummary } from ".";
 import { ICollection } from "./ICollection";
 import { IHashtag } from "./IHashtag";
 
@@ -21,7 +21,7 @@ export interface IUser extends ICollection {
     profile: string; // 프로필 이미지 주소
     articles: [IArticle];
     following: [IUser]; // 내가 팔로우 중인 유저
-    follower: [IUser]; // 나를 팔로우 중인 유저
+    likes: [ISummary];
     hashtags: [IHashtag]; // 내가 관심 가진 분야
     isAdmin: Boolean; // 관리자 여부
 }

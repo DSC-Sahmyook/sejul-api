@@ -5,7 +5,7 @@
  * History
  * -
  */
-import { Request, Response } from "express";
+import { json, Request, Response } from "express";
 import * as Models from "../utils/db/models";
 import { ENV, VALIDATOR } from "../utils";
 import { IAPIError } from "../interfaces";
@@ -69,36 +69,35 @@ export const fetchRelatedUser = async (req: Request, res: Response) => {
         const { username } = req.params;
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
-        
+
         // 유저 ObjectID 가져오기
         const userObjectID = (
             await Models.User.findOne({
-            username: username
+                username: username,
             })
         )._id;
 
         if (userObjectID) {
             // 해당 유저의 글 조회
             const result = await Models.Summary.aggregate([
-            {
-                $match: { user: userObjectID }
-            },
-            {
-                $sort: { createdAt: -1 },
-            },
-            {
-                $skip: cnt * (page - 1),
-            },
-            {
-                $limit: cnt,
-            },
+                {
+                    $match: { user: userObjectID },
+                },
+                {
+                    $sort: { createdAt: -1 },
+                },
+                {
+                    $skip: cnt * (page - 1),
+                },
+                {
+                    $limit: cnt,
+                },
             ]);
-    
+
             res.status(200).json(result);
         } else {
             throw new Error("글이 존재하지 않습니다");
         }
-
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",
@@ -303,4 +302,36 @@ export const remove = async (req: Request, res: Response) => {
     }
 };
 
-// 요약 글 점수 주기
+// 유저가 좋아요 한 글
+export const fetchLikeSummary = async (req: Request, res: Response) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
+
+export const likeSummary = async (req: Request, res: Response) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
+
+export const removeFromLikeSummary = async (req: Request, res: Response) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};

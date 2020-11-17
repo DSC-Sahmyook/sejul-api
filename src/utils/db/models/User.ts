@@ -29,6 +29,7 @@ export const UserSchema = new mongoose.Schema({
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     // 관심 해시태그
     hashtag: [{ type: mongoose.Schema.Types.ObjectId, ref: "Hashtag" }],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Summary" }],
     // 추가한 기사,
     articles: [
         {

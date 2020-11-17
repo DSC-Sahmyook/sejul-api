@@ -48,3 +48,25 @@ export const create = async (request: Request, response: Response) => {
         response.status(500).json(_error);
     }
 };
+
+export const followHashtag = async (req: Request, res: Response) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
+
+export const unfollowHashtag = async (req: Request, res: Response) => {
+    try {
+        // 코드
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
