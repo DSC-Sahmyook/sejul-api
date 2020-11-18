@@ -49,7 +49,22 @@ export const uploadProfileImage = async (
  * @author 유경수
  */
 export const info = async (req: Request, res: Response) => {
-    return res.status(200).json(req.user);
+    const { username } = req.params;
+    try {
+        const result = await Models.User.findOne({ username: username });
+        if (result) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).json({
+                message: "존재하지 않는 사용자입니다",
+            });
+        }
+    } catch (e) {
+        res.status(500).json({
+            message: "조회 중 오류가 발생했습니다",
+            error: e.message,
+        });
+    }
 };
 
 /**
