@@ -51,7 +51,10 @@ export const uploadProfileImage = async (
 export const info = async (req: Request, res: Response) => {
     const { username } = req.params;
     try {
-        const result = await Models.User.findOne({ username: username });
+        const result = await Models.User.findOne(
+            { username: username },
+            { password: -1, isAdmin: -1, isDeleted: -1 }
+        );
         if (result) {
             res.status(200).json(result);
         } else {
