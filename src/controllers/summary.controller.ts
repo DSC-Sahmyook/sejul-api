@@ -31,24 +31,31 @@ export const fetchDetail = async (req: Request, res: Response) => {
         const result = await Models.Summary.findOne({
             _id: summary_id,
         })
-        .populate("hashtags")
-        .populate("user");
+            .populate("hashtags")
+            .populate("user");
 
-        // 같은 ip는 조회수 카운트에 더하지 않음
-        const isExists = result.views.find((item) => {
-            return item.ip === ip;
-        });
-
-        if (!isExists) {
-            result.views.push({
-                ip: ip,
-                user: req.user || undefined,
-                viewDate: new Date(),
+        if (result) {
+            // 같은 ip는 조회수 카운트에 더하지 않음
+            const isExists = result.views.find((item) => {
+                return item.ip === ip;
             });
-            await result.save();
-        }
 
-        res.json(result);
+            if (!isExists) {
+                result.views.push({
+                    ip: ip,
+                    user: req.user || undefined,
+                    viewDate: new Date(),
+                });
+                await result.save();
+            }
+
+            res.status(200).json(result);
+        } else {
+            res.status(404).json({
+                displayMessage: "글이 존재하지 않습니다",
+                message: "글이 존재하지 않습니다",
+            });
+        }
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",
