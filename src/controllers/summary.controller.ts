@@ -30,7 +30,9 @@ export const fetchDetail = async (req: Request, res: Response) => {
 
         const result = await Models.Summary.findOne({
             _id: summary_id,
-        });
+        })
+        .populate("hashtags")
+        .populate("user");
 
         // 같은 ip는 조회수 카운트에 더하지 않음
         const isExists = result.views.find((item) => {
