@@ -186,13 +186,52 @@ export const deleteUser = async (req: Request, res: Response) => {
 //#endregion
 
 // 특정 유저가 팔로우 중인 사용자와 작성 글
-
 export const fetchFollowingUserAndSummaries = async (
     req: Request,
     res: Response
 ) => {
     try {
-        // 코드
+        const { username } = req.params;
+        const page = Number(req.query.page) || 1;
+        const cnt = Number(req.query.cnt) || 15;
+        
+        // 팔로우하는 사용자 목록 가져오기
+        const userFollowingList = (
+            await Models.User.findOne({
+            username: username
+            })
+        ).following;
+
+        // 팔로우 하는 유저가 존재한다면
+        if(userFollowingList.length > 0) {
+            // 팔로우하는 사용자들의 모든 글 가져오기
+            const userFollowingSummaryData = await Models.Summary.aggregate([
+                {
+                    $match: {user: {$in: userFollowingList}}
+                },
+                {
+                    $sort: { createdAt: -1 },
+                },
+                {
+                    $skip: cnt * (page - 1),
+                },
+                {
+                    $limit: cnt,
+                },
+            ]);
+
+            const result = {
+                users : userFollowingList ,                // 사용자들
+                summary : {
+                    currentPage : page,                    // 요청한 현재 페이지 
+                    data : userFollowingSummaryData,       // 해당 페이지의 갯수?? 해당 페이지의 data?
+                    total : userFollowingList.length       // 이 경우에 해당하는 모든 글의 갯수
+                }
+            }
+            res.status(200).json(result);
+        } else {
+            throw new Error("팔로우 중인 유저가 존재하지 않습니다.");
+        }
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
