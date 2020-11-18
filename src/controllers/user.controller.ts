@@ -53,7 +53,7 @@ export const info = async (req: Request, res: Response) => {
     try {
         const result = await Models.User.findOne(
             { username: username },
-            { password: -1, isAdmin: -1, isDeleted: -1 }
+            { password: 0, isAdmin: 0, isDeleted: 0 }
         );
         if (result) {
             res.status(200).json(result);
