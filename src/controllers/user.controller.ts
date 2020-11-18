@@ -44,6 +44,10 @@ export const uploadProfileImage = async (
 
 //#region 사용자 정보 수정
 
+export const authenticatedUserInfo = (req: Request, res: Response) => {
+    res.status(200).json(req.user);
+};
+
 /**
  * @description 사용자 정보 가져오기
  * @author 유경수

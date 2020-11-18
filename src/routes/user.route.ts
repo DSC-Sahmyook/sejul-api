@@ -19,7 +19,11 @@ const multer = Multer({
 const router = Router();
 
 // 유저 정보 가져오기
-router.get("/", Middlewares.Auth.isAuthenticated, UserController.info);
+router.get(
+    "/",
+    Middlewares.Auth.isAuthenticated,
+    UserController.authenticatedUserInfo
+);
 // 유저가 팔로우 중인 사용자 정보
 router.get(
     "/:username/following",
