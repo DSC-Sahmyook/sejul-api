@@ -58,22 +58,22 @@ export const followHashtag = async (req: Request, res: Response) => {
         //사용자 조회
         const user = await Models.User.findOne({
             username: "YOOGOMJA",
-        });
+        }).populate("hashtags");
 
         //사용자 해쉬태그 = user.hashtags
 
         //사용자 해쉬태그 아이디 조회
-        const userHashtagID = (
-            await Models.Hashtag.findOne({
-                hashtag: user.hashtags,
-            })
-        )._id;
+        // const userHashtagID = (
+        //     await Models.Hashtag.findOne({
+        //         hashtag: user.hashtags,
+        //     })
+        // )._id;
 
         //해당 해시태그를 포함하는 모든 작성 글 조회
         const userHashtagSummary = await Models.Summary.aggregate([
             {
                 $match: {
-                    user: user,
+                    // user: user,
                     hashtags: { $in: user.hashtags },
                 },
             },
