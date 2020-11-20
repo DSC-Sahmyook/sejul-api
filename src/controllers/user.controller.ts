@@ -214,7 +214,7 @@ export const fetchFollowingUserAndSummaries = async (
     res: Response
 ) => {
     try {
-        // 코드
+        //코드
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
