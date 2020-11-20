@@ -57,22 +57,17 @@ export const followHashtag = async (req: Request, res: Response) => {
 
         //사용자 조회
         const user = await Models.User.findOne({
-            username: "YOOGOMJA",
+            username: username,
         });
-
-        //사용자 해쉬태그 = user.hashtags
-
-        //사용자 해쉬태그 아이디 조회
-        const userHashtagID = (
-            await Models.Hashtag.findOne({
-                hashtag : user.hashtags,
-            })
-        )._id;
+        
+        //사용자 해쉬태그 아이디= user.hashtags
 
         //해당 해시태그를 포함하는 모든 작성 글 조회
-        const userHashtagSummary=await Models.Summary.aggregate([
+        const userHashtagSummary = await Models.Summary.find([
             {
-                $match : {user: user, hashtag : {$in: userHashtagID}},
+                $match: {
+                    hashtags: { $in: user.hashtags },
+                },
             },
             {
                 $sort: { createdAt: -1 },
@@ -85,26 +80,21 @@ export const followHashtag = async (req: Request, res: Response) => {
             },
         ]);
 
-        if (user){
-        const result = {
-            hashtags : user.hashtags , // 해시태그 
-            summary : { 
-              currentPage : 1, // 요청한 현재 페이지
-              data : userHashtagSummary,  // 실제 요약글 데이터
-              total : 100, // 해당 조건에 해당하는 모든 글의 갯수 
-            }
-          }
-          
-          res.status(200).json(result);
-        } else{
+        if (user) {
+            const result = {
+                hashtags: user.hashtags, // 해시태그
+                summary: {
+                    currentPage: 1, // 요청한 현재 페이지
+                    data: userHashtagSummary, // 실제 요약글 데이터
+                    total: 100, // 해당 조건에 해당하는 모든 글의 갯수
+                },
+            };
+            res.status(200).json(result);
+        } else {
             throw new Error("사용자가 존재하지 않습니다");
         }
     } catch (e) {
         res.status(500).json({
-            message: "조회 중 오류가 발생했습니다",
-            error: e.message,
-        });
-        res.status(200).json({
             message: "조회 중 오류가 발생했습니다",
             error: e.message,
         });
