@@ -61,9 +61,9 @@ export const followHashtag = async (req: Request, res: Response) => {
         });
         
         //사용자 해쉬태그 아이디= user.hashtags
-
+        
         //해당 해시태그를 포함하는 모든 작성 글 조회
-        const userHashtagSummary = await Models.Summary.find([
+        const userHashtagSummary = await Models.Summary.aggregate([
             {
                 $match: {
                     hashtags: { $in: user.hashtags },
@@ -84,9 +84,9 @@ export const followHashtag = async (req: Request, res: Response) => {
             const result = {
                 hashtags: user.hashtags, // 해시태그
                 summary: {
-                    currentPage: 1, // 요청한 현재 페이지
+                    currentPage: page, // 요청한 현재 페이지
                     data: userHashtagSummary, // 실제 요약글 데이터
-                    total: 100, // 해당 조건에 해당하는 모든 글의 갯수
+                    total: userHashtagSummary.length, // 해당 조건에 해당하는 모든 글의 갯수
                 },
             };
             res.status(200).json(result);
