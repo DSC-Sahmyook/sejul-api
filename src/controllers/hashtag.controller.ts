@@ -58,8 +58,10 @@ export const followHashtag = async (req: Request, res: Response) => {
         //사용자 조회
         const user = await Models.User.findOne({
             username: username,
-        }).populate("hashtags");
-
+        });
+        
+        //사용자 해쉬태그 아이디= user.hashtags
+        
         //해당 해시태그를 포함하는 모든 작성 글 조회
         const userHashtagSummary = await Models.Summary.aggregate([
             {
@@ -112,7 +114,11 @@ export const followHashtag = async (req: Request, res: Response) => {
         if (user) {
             const result = {
                 hashtags: user.hashtags, // 해시태그
-                ...userHashtagSummary[0],
+                summary: {
+                    currentPage: page, // 요청한 현재 페이지
+                    data: userHashtagSummary, // 실제 요약글 데이터
+                    total: userHashtagSummary.length, // 해당 조건에 해당하는 모든 글의 갯수
+                },
             };
             res.status(200).json(result);
         } else {
