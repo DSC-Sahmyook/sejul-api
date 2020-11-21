@@ -216,20 +216,69 @@ export const fetchFollowingUserAndSummaries = async (
         const { username } = req.params;
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
-        
+
         // 팔로우하는 사용자 목록 가져오기
         const userFollowingList = (
-            await Models.User.findOne({
-            username: username
+            await Models.User.findOne(
+                {
+                    username: username,
+                },
+                {
+                    password: 0,
+                    isDeleted: 0,
+                    isAdmin: 0,
+                }
+            ).populate("following", {
+                password: 0,
+                isDeleted: 0,
+                isAdmin: 0,
+                following: 0,
+                hashtags: 0,
+                lastUpdatedDate: 0,
+                createdAt: 0,
+                articles: 0,
             })
         ).following;
 
         // 팔로우 하는 유저가 존재한다면
-        if(userFollowingList.length > 0) {
+        if (userFollowingList.length > 0) {
             // 팔로우하는 사용자들의 모든 글 가져오기
             const userFollowingSummaryData = await Models.Summary.aggregate([
                 {
-                    $match: {user: {$in: userFollowingList}}
+                    $match: { user: { $in: userFollowingList } },
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        // foreignField: "user",
+                        // localField: "user",
+                        pipeline: [
+                            {
+                                $project: {
+                                    password: 0,
+                                    isDeleted: 0,
+                                    isAdmin: 0,
+                                    following: 0,
+                                    hashtags: 0,
+                                    lastUpdatedDate: 0,
+                                    createdAt: 0,
+                                    articles: 0,
+                                },
+                            },
+                        ],
+                        as: "user",
+                    },
+                },
+                {
+                    $unwind: "$user",
+                },
+                {
+                    $lookup: {
+                        from: "hashtags",
+                        foreignField: "_id",
+                        localField: "hashtags",
+                        as: "hashtags",
+                    },
                 },
                 {
                     $sort: { createdAt: -1 },
@@ -243,13 +292,13 @@ export const fetchFollowingUserAndSummaries = async (
             ]);
 
             const result = {
-                users : userFollowingList ,                // 사용자들
-                summary : {
-                    currentPage : page,                    // 요청한 현재 페이지 
-                    data : userFollowingSummaryData,       // 해당 페이지의 갯수?? 해당 페이지의 data?
-                    total : userFollowingList.length       // 이 경우에 해당하는 모든 글의 갯수
-                }
-            }
+                users: userFollowingList, // 사용자들
+                summary: {
+                    currentPage: page, // 요청한 현재 페이지
+                    data: userFollowingSummaryData, // 해당 페이지의 갯수?? 해당 페이지의 data?
+                    total: userFollowingList.length, // 이 경우에 해당하는 모든 글의 갯수
+                },
+            };
             res.status(200).json(result);
         } else {
             throw new Error("팔로우 중인 유저가 존재하지 않습니다.");
@@ -300,12 +349,12 @@ export const unFollowUser = async (req: Request, res: Response) => {
 
 export const UserArticles = async (req: Request, res: Response) => {
     try {
-        const {username} = req.params;
+        const { username } = req.params;
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
-        
+
         //사용자의 기사=user.articles
-        
+
         const fetchUserArticles = await Models.User.aggregate([
             {
                 // 모든 데이터 갯수를 가져오기 위해서 분리
@@ -347,10 +396,10 @@ export const UserArticles = async (req: Request, res: Response) => {
 
         if (username) {
             const result = {
-                data : fetchUserArticles,
-                currentPage : page,
-                total : fetchUserArticles.length,
-              }
+                data: fetchUserArticles,
+                currentPage: page,
+                total: fetchUserArticles.length,
+            };
             res.status(200).json(result);
         } else {
             throw new Error("사용자가 존재하지 않습니다");
