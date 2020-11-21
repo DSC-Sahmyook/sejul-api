@@ -312,12 +312,12 @@ export const fetchFollowingUserAndSummaries = async (
             ]);
 
             const result = {
-                // test: followUserIds,
-                // users: followUsers, // 사용자들
+                test: followUserIds,
+                users: followUsers, // 사용자들
                 summary: {
-                    // currentPage: page, // 요청한 현재 페이지
+                    currentPage: page, // 요청한 현재 페이지
                     data: userFollowingSummaryData, // 해당 페이지의 갯수?? 해당 페이지의 data?
-                    // total: followUsers.length, // 이 경우에 해당하는 모든 글의 갯수
+                    total: followUsers.length, // 이 경우에 해당하는 모든 글의 갯수
                 },
             };
             res.status(200).json(result);
