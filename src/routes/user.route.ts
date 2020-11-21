@@ -37,7 +37,8 @@ router.get("/:username/likes", SummaryController.fetchLikeSummary);
 router.get(
     "/:username/bookmarks",
     Middlewares.Auth.isAuthenticated,
-    ArticleController.fetchArticles
+    ArticleController.fetchArticles,
+    //UserController.UserArticles,
 );
 // 유저가 작성한 글
 router.get("/:username/summary", SummaryController.fetchRelatedUser);
