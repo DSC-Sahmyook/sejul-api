@@ -7,7 +7,7 @@ const router = Router();
 router.get(
     "/",
     Middlewares.Auth.isAuthenticated,
-    ArticleController.fetchArticles
+    ArticleController.fetchArticles,
 );
 router.post(
     "/",
