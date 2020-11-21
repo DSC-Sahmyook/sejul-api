@@ -218,41 +218,61 @@ export const fetchFollowingUserAndSummaries = async (
         const cnt = Number(req.query.cnt) || 15;
 
         // 팔로우하는 사용자 목록 가져오기
-        const userFollowingList = (
-            await Models.User.findOne(
-                {
-                    username: username,
+        const currentUser = await Models.User.findOne({ username: username });
+        const followUsers = await Models.User.aggregate([
+            {
+                $match: {
+                    _id: {
+                        $in: currentUser.following,
+                    },
                 },
-                {
+            },
+            {
+                $project: {
                     password: 0,
                     isDeleted: 0,
                     isAdmin: 0,
-                }
-            ).populate("following", {
-                password: 0,
-                isDeleted: 0,
-                isAdmin: 0,
-                following: 0,
-                hashtags: 0,
-                lastUpdatedDate: 0,
-                createdAt: 0,
-                articles: 0,
-            })
-        ).following;
+                    lastUpdatedDate: 0,
+                    createdAt: 0,
+                    articles: 0,
+                },
+            },
+            {
+                $lookup: {
+                    from: "summaries",
+                    let: { id: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$user", "$$id"] },
+                            },
+                        },
+                        { $project: { _id: 1, user: 1 } },
+                    ],
+                    as: "summaries",
+                },
+            },
+        ]);
 
         // 팔로우 하는 유저가 존재한다면
-        if (userFollowingList.length > 0) {
+        if (followUsers.length > 0) {
+            let followUserIds = [];
+            followUsers.forEach((item) => followUserIds.push(item._id));
             // 팔로우하는 사용자들의 모든 글 가져오기
             const userFollowingSummaryData = await Models.Summary.aggregate([
                 {
-                    $match: { user: { $in: userFollowingList } },
+                    $match: { user: { $in: followUserIds } },
                 },
                 {
                     $lookup: {
                         from: "users",
-                        // foreignField: "user",
-                        // localField: "user",
+                        let: { id: "$user" },
                         pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$_id", "$$id"] },
+                                },
+                            },
                             {
                                 $project: {
                                     password: 0,
@@ -292,11 +312,12 @@ export const fetchFollowingUserAndSummaries = async (
             ]);
 
             const result = {
-                users: userFollowingList, // 사용자들
+                // test: followUserIds,
+                // users: followUsers, // 사용자들
                 summary: {
-                    currentPage: page, // 요청한 현재 페이지
+                    // currentPage: page, // 요청한 현재 페이지
                     data: userFollowingSummaryData, // 해당 페이지의 갯수?? 해당 페이지의 data?
-                    total: userFollowingList.length, // 이 경우에 해당하는 모든 글의 갯수
+                    // total: followUsers.length, // 이 경우에 해당하는 모든 글의 갯수
                 },
             };
             res.status(200).json(result);
