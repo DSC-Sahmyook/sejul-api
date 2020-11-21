@@ -30,7 +30,10 @@ router.get(
     UserController.fetchFollowingUserAndSummaries
 );
 // 유저가 팔로우 중인 해시태그 정보
-router.get("/:username/hashtags", HashtagController.followHashtag);
+router.get(
+    "/:username/hashtags",
+    UserController.fetchFollowingHashtagAndSummaries
+);
 // 유저가 좋아요한 글
 router.get("/:username/likes", SummaryController.fetchLikeSummary);
 // 유저가 저장한 기사

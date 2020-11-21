@@ -93,6 +93,43 @@ export const fetchRelatedUser = async (req: Request, res: Response) => {
                     $match: { user: userObjectID },
                 },
                 {
+                    $lookup: {
+                        from: "hashtags",
+                        localField: "hashtags",
+                        foreignField: "_id",
+                        as: "hashtags",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        let: { id: "$user" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$_id", "$$id"] },
+                                },
+                            },
+                            {
+                                $project: {
+                                    password: 0,
+                                    isDeleted: 0,
+                                    isAdmin: 0,
+                                    following: 0,
+                                    hashtags: 0,
+                                    lastUpdatedDate: 0,
+                                    createdAt: 0,
+                                    articles: 0,
+                                },
+                            },
+                        ],
+                        as: "user",
+                    },
+                },
+                {
+                    $unwind: "$user",
+                },
+                {
                     $sort: { createdAt: -1 },
                 },
                 {
