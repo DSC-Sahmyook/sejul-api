@@ -312,7 +312,6 @@ export const fetchFollowingUserAndSummaries = async (
             ]);
 
             const result = {
-                test: followUserIds,
                 users: followUsers, // 사용자들
                 summary: {
                     currentPage: page, // 요청한 현재 페이지
