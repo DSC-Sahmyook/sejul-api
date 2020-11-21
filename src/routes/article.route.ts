@@ -5,9 +5,14 @@ import * as Middlewares from "../middlewares";
 const router = Router();
 
 router.get(
+    "/check",
+    Middlewares.Auth.isAuthenticated,
+    ArticleController.checkAlreadyStored
+);
+router.get(
     "/",
     Middlewares.Auth.isAuthenticated,
-    ArticleController.fetchArticles,
+    ArticleController.fetchArticles
 );
 router.post(
     "/",

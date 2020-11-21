@@ -75,3 +75,33 @@ export const removeArticle = async (req: Request, res: Response) => {
 };
 
 //#endregion
+
+export const checkAlreadyStored = async (req: Request, res: Response) => {
+    try {
+        const { url } = req.body;
+        if (url === undefined || url === null) {
+            throw new Error("주소가 주어져야 합니다");
+        }
+
+        const user = await Models.User.findOne({
+            _id: req.user._id,
+        });
+
+        let isAlreadyStored = false;
+        user.articles.forEach((item) => {
+            if (item.link === url || item.originalLink === url) {
+                isAlreadyStored = true;
+            }
+        });
+
+        res.status(200).json({
+            isAlreadyStored: isAlreadyStored,
+            message: "조회되었습니다",
+        });
+    } catch (e) {
+        res.status(500).json({
+            message: "오류가 발생했습니다",
+            error: e.message,
+        });
+    }
+};
