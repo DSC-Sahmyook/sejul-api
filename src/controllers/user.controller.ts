@@ -59,8 +59,32 @@ export const info = async (req: Request, res: Response) => {
             { username: username },
             { password: 0, isAdmin: 0, isDeleted: 0 }
         );
+        const summaries = await Models.Summary.find(
+            {
+                user: result._id,
+            },
+            {
+                _id: 0,
+                password: 0,
+                isDeleted: 0,
+                isAdmin: 0,
+            }
+        )
+            .populate("user", {
+                _id: 0,
+                password: 0,
+                isDeleted: 0,
+                isAdmin: 0,
+                hashtags: 0,
+                following: 0,
+                articles: 0,
+            })
+            .populate("hashtags");
         if (result) {
-            res.status(200).json(result);
+            res.status(200).json({
+                user: result,
+                summaries: summaries,
+            });
         } else {
             res.status(404).json({
                 message: "존재하지 않는 사용자입니다",
@@ -336,7 +360,47 @@ export const fetchFollowingHashtagAndSummaries = async (
     res: Response
 ) => {
     try {
-        // 코드
+        try {
+            const { username } = req.params;
+            const page = Number(req.query.page) || 1;
+            const cnt = Number(req.query.cnt) || 15;
+
+            // 팔로우하는 사용자 목록 가져오기
+            const currentUser = await Models.User.findOne({
+                username: username,
+            });
+            const followHashtags = await Models.Hashtag.aggregate([
+                {
+                    $match: {
+                        _id: {
+                            $in: currentUser.hashtags,
+                        },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: "summaries",
+                        let: { id: "$_id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $in: ["$hashtags", "$$id"] },
+                                },
+                            },
+                            { $project: { _id: 1, user: 1 } },
+                        ],
+                        as: "summaries",
+                    },
+                },
+            ]);
+
+            res.json(followHashtags);
+        } catch (e) {
+            res.status(500).json({
+                message: "조회 중 오류가 발생했습니다",
+                error: e.message,
+            });
+        }
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
