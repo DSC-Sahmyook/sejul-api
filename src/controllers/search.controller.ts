@@ -53,7 +53,6 @@ export const searchInSummary = async (req: Request, res: Response) => {
             .populate("user");
 
         res.json(result);
-        //res.status(200).json(result);
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",
