@@ -314,7 +314,38 @@ export const remove = async (req: Request, res: Response) => {
 // 유저가 좋아요 한 글
 export const fetchLikeSummary = async (req: Request, res: Response) => {
     try {
-        // 코드
+        const { username } = req.params;
+        const page = Number(req.query.page) || 1;
+        const cnt = Number(req.query.cnt) || 15;
+        // 해당 유저의 좋아요한 글 목록
+        const userLikedSummaries = ( 
+            await Models.User.findOne(
+                {
+                    username: username
+                }
+            ).populate({
+                path: 'likes',   // likes 필드 객체화
+                // 페이징
+                options: { 
+                    sort: { createdAt: -1 },
+                    skip: cnt * (page -1),
+                    limit: cnt
+                }
+            })
+        ).likes;
+        
+        if(userLikedSummaries.length > 0) {
+            const result = {
+                data : userLikedSummaries, // 좋아요한 글
+                currentPage : page, // 현재 페이지 
+                total : userLikedSummaries.length // 해당 모든 아이템의 갯수
+             }
+    
+            res.status(200).json(result);
+        } else {
+            throw new Error("좋아하는 글이 없습니다.");
+        }
+        
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
