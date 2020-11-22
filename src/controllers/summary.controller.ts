@@ -250,7 +250,7 @@ export const create = async (req: Request, res: Response) => {
             hashtags: hashtags ? hashtags.split(",") : [],
         });
 
-        newSummary.save();
+        await newSummary.save();
         res.status(201).json({
             message: "생성되었습니다",
         });
