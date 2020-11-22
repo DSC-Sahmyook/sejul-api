@@ -267,9 +267,10 @@ export const create = async (req: Request, res: Response) => {
             hashtags: hashtagIds,
         });
 
-        await newSummary.save();
+        const result = await newSummary.save();
         res.status(201).json({
             message: "생성되었습니다",
+            summary: result,
         });
     } catch (e) {
         const _error: IAPIError = {
