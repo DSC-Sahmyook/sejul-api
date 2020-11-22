@@ -50,7 +50,12 @@ export const searchInSummary = async (req: Request, res: Response) => {
             content: { $regex: `${search}` },
         })
             .limit(10)
-            .populate("user");
+            .populate("user", {
+                password: 0,
+                isAdmin: 0,
+                isDeleted: 0,
+            })
+            .populate("hashtags");
 
         res.json(result);
         //res.status(200).json(result);
