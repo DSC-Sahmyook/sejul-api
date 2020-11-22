@@ -244,13 +244,13 @@ export const create = async (req: Request, res: Response) => {
                 text: hashtag,
             });
             if (fetched) {
-                hashtagIds.push(fetched._id);
+                hashtagIds.push(fetched);
             } else {
                 const newHashatag = new Models.Hashtag({
                     text: hashtag,
                 });
                 await newHashatag.save();
-                hashtagIds.push(newHashatag._id);
+                hashtagIds.push(newHashatag);
             }
         });
 
