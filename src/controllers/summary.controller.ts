@@ -198,8 +198,7 @@ export const create = async (req: Request, res: Response) => {
             articleLink,
             articleOriginalLink,
             content,
-            timestampStartDt,
-            timestampFinishDt,
+            timestamp,
             hashtags,
         } = req.body;
 
@@ -207,7 +206,7 @@ export const create = async (req: Request, res: Response) => {
         if (
             VALIDATOR.isEmpty(articleTitle) ||
             articleTitle.length < 10 ||
-            articleTitle.length > 100
+            articleTitle.length > 500
         ) {
             throw new Error("제목 형식이 올바르지 않습니다");
         }
@@ -234,10 +233,7 @@ export const create = async (req: Request, res: Response) => {
         }
 
         // 4. 타임스탬프 관련
-        if (
-            !moment(timestampStartDt).isValid() ||
-            !moment(timestampFinishDt).isValid()
-        ) {
+        if (VALIDATOR.isEmpty(timestamp)) {
             throw new Error("타이머의 시간정보가 올바르지 않습니다");
         }
 
@@ -250,11 +246,8 @@ export const create = async (req: Request, res: Response) => {
             },
             user: req.user,
             content: content,
-            timestamp: {
-                start: moment(timestampStartDt).toDate(),
-                finish: moment(timestampFinishDt).toDate(),
-            },
-            hashtags: hashtags || [],
+            timestamp: timestamp,
+            hashtags: hashtags ? hashtags.split(",") : [],
         });
 
         newSummary.save();

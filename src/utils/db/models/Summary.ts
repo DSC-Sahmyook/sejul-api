@@ -21,10 +21,7 @@ const SummarySchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
-    timestamp: {
-        start: Date,
-        finish: Date,
-    },
+    timestamp: String,
     views: [
         {
             ip: String,

@@ -14,11 +14,7 @@ export interface ISummary extends ICollection {
     article: IArticle; // 기사
     user: IUser; // 요약자
     content: string; // 내용
-    timestamp: {
-        // 요약 시간에 대한 내용
-        start: Date; // 시작일자
-        finish: Date; // 종료일자
-    };
+    timestamp: string;
     // 글 조회 정보
     views: [IView];
     // 글 평가 정보
