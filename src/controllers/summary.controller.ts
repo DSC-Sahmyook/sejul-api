@@ -237,6 +237,23 @@ export const create = async (req: Request, res: Response) => {
             throw new Error("타이머의 시간정보가 올바르지 않습니다");
         }
 
+        hashtags = hashtags.split(",");
+        let hashtagIds = [];
+        hashtags.map(async (hashtag) => {
+            const fetched = await Models.Hashtag.findOne({
+                text: hashtag,
+            });
+            if (fetched) {
+                hashtagIds.push(fetched._id);
+            } else {
+                const newHashatag = new Models.Hashtag({
+                    text: hashtag,
+                });
+                await newHashatag.save();
+                hashtagIds.push(newHashatag._id);
+            }
+        });
+
         // 데이터 생성
         const newSummary = new Models.Summary({
             article: {
@@ -247,7 +264,7 @@ export const create = async (req: Request, res: Response) => {
             user: req.user,
             content: content,
             timestamp: timestamp,
-            hashtags: hashtags ? hashtags.split(",") : [],
+            hashtags: hashtagIds,
         });
 
         await newSummary.save();
