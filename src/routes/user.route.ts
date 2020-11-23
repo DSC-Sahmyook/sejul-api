@@ -37,11 +37,7 @@ router.get(
 // 유저가 좋아요한 글
 router.get("/:username/likes", SummaryController.fetchLikeSummary);
 // 유저가 저장한 기사
-router.get(
-    "/:username/bookmarks",
-    Middlewares.Auth.isAuthenticated,
-    UserController.UserArticles
-);
+router.get("/:username/bookmarks", UserController.UserArticles);
 
 // 유저가 작성한 글
 router.get("/:username/summaries", SummaryController.fetchRelatedUser);
