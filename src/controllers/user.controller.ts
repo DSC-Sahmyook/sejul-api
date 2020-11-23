@@ -525,7 +525,7 @@ export const UserArticles = async (req: Request, res: Response) => {
             const result = {
                 data: fetchUserArticles[0].articles.articles,
                 currentPage: page,
-                total: fetchUserArticles[0].matadata.count,
+                total: fetchUserArticles[0].matadata,
             };
             res.status(200).json(result);
         } else {
