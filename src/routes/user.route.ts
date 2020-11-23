@@ -44,7 +44,7 @@ router.get(
 );
 
 // 유저가 작성한 글
-router.get("/:username/summary", SummaryController.fetchRelatedUser);
+router.get("/:username/summaries", SummaryController.fetchRelatedUser);
 // 유저의 정보
 router.get("/:username", UserController.info);
 
