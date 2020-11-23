@@ -523,9 +523,15 @@ export const UserArticles = async (req: Request, res: Response) => {
 
         if (username) {
             const result = {
-                data: fetchUserArticles,
+                data:
+                    fetchUserArticles.length > 0
+                        ? (fetchUserArticles as any).articles
+                        : [],
                 currentPage: page,
-                total: fetchUserArticles.length,
+                total:
+                    fetchUserArticles.length > 0
+                        ? (fetchUserArticles as any).articles.length
+                        : 0,
             };
             res.status(200).json(result);
         } else {
