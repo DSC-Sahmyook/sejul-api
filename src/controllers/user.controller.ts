@@ -47,7 +47,7 @@ export const uploadProfileImage = async (
 //#region 사용자 정보 수정
 
 export const authenticatedUserInfo = (req: Request, res: Response) => {
-    res.status(200).json(req.user);
+    res.status(200).json(req.user.populate("following").populate("hashtags"));
 };
 
 /**
