@@ -88,13 +88,6 @@ router.put(
 // 유저 정보 수정
 router.put("/:username", Middlewares.Auth.isItself, UserController.editUser);
 
-// 글 좋아요 취소
-router.delete(
-    "/:username/like/:summaryId",
-    Middlewares.Auth.isItself,
-    SummaryController.removeFromLikeSummary
-);
-
 // 사용자 팔로우 취소
 router.delete(
     "/:username/following/:target",
