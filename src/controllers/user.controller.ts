@@ -258,7 +258,7 @@ export const fetchFollowingUserAndSummaries = async (
         const userFollowingList = (
             await Models.User.findOne({
                 username: username,
-            }).populate("following", { password: -1 })
+            }).populate("following", { password: 0 })
         ).following;
 
         // 팔로우 하는 유저가 존재한다면
