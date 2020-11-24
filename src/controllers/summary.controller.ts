@@ -359,37 +359,39 @@ export const remove = async (req: Request, res: Response) => {
     }
 };
 
-// 유저가 좋아요 한 글
 export const fetchLikeSummary = async (req: Request, res: Response) => {
     try {
         const { username } = req.params;
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
         // 해당 유저의 좋아요한 글 목록
-        const userLikedSummaries = (
-            await Models.User.findOne({
-                username: username,
-            }).populate({
-                path: "likes", // likes 필드 객체화
-                // 페이징
-                options: {
-                    sort: { createdAt: -1 },
-                    skip: cnt * (page - 1),
-                    limit: cnt,
+        
+        const currentUser = await Models.User.findOne({
+            username: username,
+        });
+
+        if (currentUser) {
+            const likedSummaries = await Models.Summary.find({
+                _id: {
+                    $in: currentUser.likes,
                 },
             })
-        ).likes;
+                .sort({ createdAt: -1 })
+                .skip(cnt * (page - 1))
+                .limit(cnt)
+                .populate("user", { password: 0, isAdmin: 0, isDeleted: 0 })
+                .populate("hashtags");
 
-        if (userLikedSummaries.length > 0) {
-            const result = {
-                data: userLikedSummaries, // 좋아요한 글
-                currentPage: page, // 현재 페이지
-                total: userLikedSummaries.length, // 해당 모든 아이템의 갯수
-            };
-
-            res.status(200).json(result);
+            res.status(200).json({
+                data: likedSummaries,
+                page: page,
+                count: currentUser.likes.length,
+            });
         } else {
-            throw new Error("좋아하는 글이 없습니다.");
+            res.status(404).json({
+                message: "존재하지 않는 사용자 입니다",
+            });
+            return;
         }
     } catch (e) {
         res.status(500).json({
@@ -399,9 +401,46 @@ export const fetchLikeSummary = async (req: Request, res: Response) => {
     }
 };
 
+// 유저가 좋아요 한 글
 export const likeSummary = async (req: Request, res: Response) => {
     try {
-        // 코드
+        const { summary_id } = req.params;
+
+        //좋아요 누를 글 조회
+        const fetchedSummary = await Models.Summary.findOne({
+            _id: summary_id,
+        });
+
+        if (req.user !== null && req.user !== undefined) {
+            //사용자가 있을 때
+            if (fetchedSummary !== null && fetchedSummary !== undefined) {
+                //글이 존재하고
+
+                //post 메소드로 요청이 왔을 때
+                //likes에 글이 존재하는지 조회
+
+                // 로그인 한 사용자의 좋아요 글 중 현재 검색한 글의 _id와 같은게 있는지 확인
+                let alreadyLikedSummary = req.user.likes.find((summary) => {
+                    return `${summary._id}` === `${fetchedSummary._id}`;
+                });
+
+                if (alreadyLikedSummary) {
+                    //이미 likes에 있다면
+                    throw new Error("이미 추가된 글입니다."); //저장하지 않음
+                } else {
+                    //likes에 없다면
+                    req.user.likes.push(fetchedSummary); //저장
+
+                    await req.user.save();
+
+                    res.status(201).json({
+                        message: "추가되었습니다",
+                    });
+                }
+            }
+        } else {
+            throw new Error("사용자가 존재하지 않습니다.");
+        }
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
@@ -412,7 +451,51 @@ export const likeSummary = async (req: Request, res: Response) => {
 
 export const removeFromLikeSummary = async (req: Request, res: Response) => {
     try {
-        // 코드
+        const { summary_id } = req.params;
+
+        //좋아요 지울 글 조회
+        const fetchedSummary = await Models.Summary.findOne({
+            _id: summary_id,
+        });
+
+        if (req.user !== null && req.user !== undefined) {
+            //사용자가 있을 때
+            if (fetchedSummary !== null && fetchedSummary !== undefined) {
+                //글이 존재하고
+
+                //delete 메소드로 요청이 왔을 때
+
+                //likes에 글이 존재하는지 조회
+                const userLikesData = req.user.likes.find((summary) => {
+                    return `${fetchedSummary._id}` === `${summary._id}`;
+                });
+
+                if (userLikesData) {
+                    //likes에 있다면
+                    await Models.User.updateOne(
+                        {
+                            _id: req.user._id,
+                        },
+                        {
+                            $pull: {
+                                likes: userLikesData,
+                            }, //삭제
+                        }
+                    );
+
+                    await req.user.save();
+
+                    res.status(201).json({
+                        message: "삭제되었습니다",
+                    });
+                } else {
+                    //likes에 없다면
+                    throw new Error("이미 삭제된 글입니다."); //삭제하지 않음
+                }
+            }
+        } else {
+            throw new Error("사용자가 존재하지 않습니다.");
+        }
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
