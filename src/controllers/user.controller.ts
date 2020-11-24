@@ -47,9 +47,12 @@ export const uploadProfileImage = async (
 //#region 사용자 정보 수정
 
 export const authenticatedUserInfo = async (req: Request, res: Response) => {
-    res.status(200).json(
-        await req.user.populate("following").populate("hashtags")
-    );
+    const result = await Models.User.findOne({
+        _id: req.user._id,
+    })
+        .populate("following")
+        .populate("hashtags");
+    res.status(200).json(result);
 };
 
 /**
