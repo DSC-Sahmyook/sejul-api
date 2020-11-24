@@ -42,7 +42,7 @@ router.get("/:username/bookmarks", UserController.UserArticles);
 // 유저가 작성한 글
 router.get("/:username/summaries", SummaryController.fetchRelatedUser);
 // 유저의 정보
-router.get("/:username", UserController.info);
+router.get("/:username", UserController.fetchUserWithSummaries);
 
 // 유저 이미지 변경
 router.post(
