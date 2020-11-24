@@ -47,7 +47,7 @@ export const searchInSummary = async (req: Request, res: Response) => {
         const { search = "", page = 1, cnt = 10 } = req.query;
 
         const result = await Models.Summary.find({
-            content: { $regex: `${search}` },
+            content: { $regex: `.*${search}.*` },
         })
             .limit(10)
             .populate("user", {
