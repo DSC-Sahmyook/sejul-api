@@ -277,9 +277,6 @@ export const fetchFollowingUserAndSummaries = async (
                     },
                 },
                 {
-                    $unwind: "$hashtags",
-                },
-                {
                     $sort: { createdAt: -1 },
                 },
                 {
