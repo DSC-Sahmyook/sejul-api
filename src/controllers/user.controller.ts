@@ -269,6 +269,17 @@ export const fetchFollowingUserAndSummaries = async (
                     $match: { user: { $in: userFollowingList } },
                 },
                 {
+                    $lookup: {
+                        from: "hashtags",
+                        localField: "hashtags",
+                        foreignField: "_id",
+                        as: "hashtags",
+                    },
+                },
+                {
+                    $unwind: "hashtags",
+                },
+                {
                     $sort: { createdAt: -1 },
                 },
                 {
