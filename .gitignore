@@ -14,3 +14,5 @@ dist/
 
 # 인증 관련 파일
 secure/
+
+client/

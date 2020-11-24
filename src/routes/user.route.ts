@@ -46,7 +46,7 @@ router.get("/:username", UserController.info);
 
 // 유저 이미지 변경
 router.post(
-    "/:username/profile",
+    "/profile",
     Middlewares.Auth.isAuthenticated,
     multer.single("profileImage"),
     Middlewares.GCP.uploadImage,
@@ -54,30 +54,30 @@ router.post(
 );
 
 // 유저가 좋아요 한 글
-router.put(
-    "/:username/like",
-    Middlewares.Auth.isItself,
+router.post(
+    "/summary/:summary_id/like",
+    Middlewares.Auth.isAuthenticated,
     SummaryController.likeSummary
 );
 
 // 유저가 팔로우중인 해시태그와 관련 글
-router.put(
-    "/:username/hashtag",
-    Middlewares.Auth.isItself,
+router.post(
+    "/hashtag/:hashtag_id/like",
+    Middlewares.Auth.isAuthenticated,
     HashtagController.followHashtag
 );
 
 // 유저가 팔로우중인 사용자들과 관련 글
-router.put(
-    "/:username/following",
-    Middlewares.Auth.isItself,
+router.post(
+    "/following/:user_id",
+    Middlewares.Auth.isAuthenticated,
     UserController.followUser
 );
 
 // 유저 패스워드 수정
 router.put(
-    "/:username/password",
-    Middlewares.Auth.isItself,
+    "/password",
+    Middlewares.Auth.isAuthenticated,
     UserController.changePassword
 );
 
@@ -86,23 +86,25 @@ router.put("/:username", Middlewares.Auth.isItself, UserController.editUser);
 
 // 사용자 팔로우 취소
 router.delete(
-    "/:username/following/:target",
-    Middlewares.Auth.isItself,
+    "/following/:user_id",
+    Middlewares.Auth.isAuthenticated,
     UserController.unFollowUser
 );
 
 // 해시태그 팔로우 취소
 router.delete(
-    "/:username/hashtag/:hashtagId",
-    Middlewares.Auth.isItself,
+    "/hashtag/:hashtag_id",
+    Middlewares.Auth.isAuthenticated,
     HashtagController.unfollowHashtag
 );
 
-// 유저 삭제
 router.delete(
-    "/:username",
-    Middlewares.Auth.isItself,
-    UserController.deleteUser
+    "/summary/:summary_id/like",
+    Middlewares.Auth.isAuthenticated,
+    SummaryController.removeFromLikeSummary
 );
+
+// 유저 삭제
+router.delete("/remove", Middlewares.Auth.isItself, UserController.deleteUser);
 
 export default router;

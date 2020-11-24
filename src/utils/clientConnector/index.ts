@@ -1,0 +1,22 @@
+const path = require("path");
+import { createProxyMiddleware } from "http-proxy-middleware";
+
+const env = process.env.NODE_ENV || "development";
+
+const getClient = (dirname, callback) => {
+    if (env === "production") {
+        callback(env);
+        return (req, res) => {
+            res.sendFile(path.resolve(dirname, "client", "index.html"));
+        };
+    } else {
+        callback(env);
+        return createProxyMiddleware({
+            target: "http://localhost:3000",
+            changeOrigin: true,
+            ws: true,
+        });
+    }
+};
+
+export { getClient };

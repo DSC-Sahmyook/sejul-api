@@ -3,6 +3,7 @@ import * as bodyparser from "body-parser";
 import * as cors from "cors";
 import * as helmet from "helmet";
 import * as logger from "morgan";
+import * as path from "path";
 
 import { Application } from "express";
 
@@ -80,15 +81,29 @@ export class App {
         this.app.use("/api/hashtag", hashtagRoutes);
         this.app.use("/api/search", searchRoutes);
         this.app.use("/api/article", articleRoutes);
-
-        this.app.use((req, res) => {
+        this.app.use("/api", (req, res) => {
             // 404 ERROR
             res.status(404).send({ message: "잘못된 주소입니다" });
         });
+
+        this.app.use(
+            "*",
+            UTILS.CLIENT_CONNECTOR.getClient(__dirname, (env) => {
+                if (env === "production") {
+                    this.app.use(
+                        express.static(path.resolve(__dirname, "client"))
+                    );
+                }
+            })
+        );
+
         this.app.use((err, req, res, next) => {
             // 500 ERROR
-            console.log(err);
-            res.status(500).send({
+            res.locals.message = err.message;
+            res.locals.error = req.app.get("env") === "development" ? err : {};
+            // render the error page
+            res.status(err.status || 500);
+            res.send({
                 message: "서버 에러가 발생했습니다",
                 error: err.message,
             });

@@ -43,7 +43,7 @@ router.put("/:summary_id", Auth.isAuthenticated, SummaryController.update);
 
 // 글 삭제하기
 router.delete(
-    "/:summary_id/likes",
+    "/:summary_id/like",
     Auth.isAuthenticated,
     SummaryController.removeFromLikeSummary
 );
