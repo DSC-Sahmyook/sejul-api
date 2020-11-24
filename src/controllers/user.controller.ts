@@ -11,6 +11,7 @@ import * as Utility from "../utils";
 import * as bcrypt from "bcrypt";
 import { followHashtag } from "./hashtag.controller";
 import { IHashtag } from "../interfaces";
+import { models } from "mongoose";
 
 const env = Utility.ENV();
 
@@ -415,6 +416,28 @@ export const fetchFollowingHashtagAndSummaries = async (
 export const followUser = async (req: Request, res: Response) => {
     try {
         // 코드
+        const { username } = req.params;
+        const currentUser = await Models.User.findOne({
+            username: username,
+        });
+
+        if (currentUser) {
+            const idx = req.user.following.findIndex(
+                (followUser) => followUser._id + "" === currentUser._id + ""
+            );
+            if (idx >= 0) {
+                throw new Error("이미 등록된 사용자입니다");
+            } else {
+                req.user.following.push(currentUser);
+                await req.user.save();
+
+                res.status(200).json({
+                    message: "추가 되었습니다",
+                });
+            }
+        } else {
+            throw new Error("존재하지 않는 사용자입니다");
+        }
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
@@ -426,6 +449,36 @@ export const followUser = async (req: Request, res: Response) => {
 export const unFollowUser = async (req: Request, res: Response) => {
     try {
         // 코드
+        // 코드
+        const { username } = req.params;
+        const currentUser = await Models.User.findOne({
+            username: username,
+        });
+
+        if (currentUser) {
+            const idx = req.user.following.findIndex(
+                (followUser) => followUser._id + "" === currentUser._id + ""
+            );
+            if (idx >= 0) {
+                await Models.User.updateOne(
+                    {
+                        _id: req.user._id,
+                    },
+                    {
+                        $pull: {
+                            following: currentUser,
+                        },
+                    }
+                );
+                res.status(200).json({
+                    message : "삭제되었습니다"
+                })
+            } else {
+                throw new Error("등록되지 않은 사용자 입니다");
+            }
+        } else {
+            throw new Error("존재하지 않는 사용자입니다");
+        }
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
