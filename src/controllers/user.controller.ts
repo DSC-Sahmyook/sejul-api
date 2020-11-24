@@ -432,60 +432,13 @@ export const unFollowUser = async (req: Request, res: Response) => {
 export const UserArticles = async (req: Request, res: Response) => {
     try {
         const { username } = req.params;
-        const page = Number(req.query.page) || 1;
-        const cnt = Number(req.query.cnt) || 15;
-
         //사용자의 기사=user.articles
-
-        const fetchUserArticles = await Models.User.aggregate([
-            {
-                // 모든 데이터 갯수를 가져오기 위해서 분리
-                // facet은 여러개의 요청 파이프라인을 위해 사용
-                $facet: {
-                    // 먼저 글 정보를 불러옴
-                    articles: [
-                        {
-                            // 글 정보중 해시태그가 유저의 해시태그와 동일한 경우 추출
-                            $match: {
-                                username: username,
-                            },
-                        },
-                        {
-                            // 배열을 정렬함
-                            $sort: { createdAt: -1 },
-                        },
-                        {
-                            // 페이징 처리를 위해 건너뜀
-                            $skip: cnt * (page - 1),
-                        },
-                        {
-                            // 갯수 제한
-                            $limit: cnt,
-                        },
-                    ],
-                    // 글 정보를 조회하면서 count 정보를 산출
-                    metadata: [
-                        { $count: "count" },
-                        {
-                            $addFields: {
-                                page: page,
-                            },
-                        },
-                    ],
-                },
-            },
-        ]);
 
         const currentUser = await Models.User.findOne({
             username: username,
         });
         if (username) {
-            const result = {
-                data: fetchUserArticles,
-                currentPage: page,
-                total: fetchUserArticles.length,
-            };
-            res.status(200).json(result);
+            res.status(200).json(currentUser.articles);
         } else {
             throw new Error("사용자가 존재하지 않습니다");
         }
