@@ -348,37 +348,39 @@ export const remove = async (req: Request, res: Response) => {
     }
 };
 
-// 유저 글을 좋아요 처리
 export const fetchLikeSummary = async (req: Request, res: Response) => {
     try {
         const { username } = req.params;
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
         // 해당 유저의 좋아요한 글 목록
-        const userLikedSummaries = (
-            await Models.User.findOne({
-                username: username,
-            }).populate({
-                path: "likes", // likes 필드 객체화
-                // 페이징
-                options: {
-                    sort: { createdAt: -1 },
-                    skip: cnt * (page - 1),
-                    limit: cnt,
+        
+        const currentUser = await Models.User.findOne({
+            username: username,
+        });
+
+        if (currentUser) {
+            const likedSummaries = await Models.Summary.find({
+                _id: {
+                    $in: currentUser.likes,
                 },
             })
-        ).likes;
+                .sort({ createdAt: -1 })
+                .skip(cnt * (page - 1))
+                .limit(cnt)
+                .populate("user", { password: 0, isAdmin: 0, isDeleted: 0 })
+                .populate("hashtags");
 
-        if (userLikedSummaries.length > 0) {
-            const result = {
-                data: userLikedSummaries, // 좋아요한 글
-                currentPage: page, // 현재 페이지
-                total: userLikedSummaries.length, // 해당 모든 아이템의 갯수
-            };
-
-            res.status(200).json(result);
+            res.status(200).json({
+                data: likedSummaries,
+                page: page,
+                count: currentUser.likes.length,
+            });
         } else {
-            throw new Error("좋아하는 글이 없습니다.");
+            res.status(404).json({
+                message: "존재하지 않는 사용자 입니다",
+            });
+            return;
         }
     } catch (e) {
         res.status(500).json({
@@ -397,23 +399,6 @@ export const likeSummary = async (req: Request, res: Response) => {
         const fetchedSummary = await Models.Summary.findOne({
             _id: summary_id,
         });
-
-        /* post 메소드로 요청
-
-        const {  page = 1, cnt = 10 } = req.query;
-        const response = await ?({
-            method: "get",
-            url: "/",
-            params: {
-                query: summary_id,
-                start: page,
-                display: cnt,
-            },
-        });
-        if(req.user._id){
-            req.user.likes.push(response.data);
-        }
-        */
 
         if (req.user !== null && req.user !== undefined) {
             //사용자가 있을 때
