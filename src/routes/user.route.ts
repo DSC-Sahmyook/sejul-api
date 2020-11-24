@@ -69,7 +69,7 @@ router.post(
 
 // 유저가 팔로우중인 사용자들과 관련 글
 router.post(
-    "/following/:user_id",
+    "/following/:username",
     Middlewares.Auth.isAuthenticated,
     UserController.followUser
 );
@@ -86,7 +86,7 @@ router.put("/:username", Middlewares.Auth.isItself, UserController.editUser);
 
 // 사용자 팔로우 취소
 router.delete(
-    "/following/:user_id",
+    "/following/:username",
     Middlewares.Auth.isAuthenticated,
     UserController.unFollowUser
 );
