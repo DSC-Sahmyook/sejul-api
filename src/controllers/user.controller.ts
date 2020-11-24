@@ -466,13 +466,13 @@ export const unFollowUser = async (req: Request, res: Response) => {
                     },
                     {
                         $pull: {
-                            following: currentUser,
+                            following: currentUser._id,
                         },
                     }
                 );
                 res.status(200).json({
-                    message : "삭제되었습니다"
-                })
+                    message: "삭제되었습니다",
+                });
             } else {
                 throw new Error("등록되지 않은 사용자 입니다");
             }
