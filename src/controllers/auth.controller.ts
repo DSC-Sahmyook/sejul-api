@@ -157,10 +157,12 @@ export const kakaoCallback = (req: Request, res: Response, next: Function) => {
                                 subject: "user-info",
                             }
                         );
-                        return res.status(200).json({
-                            message: "로그인이 성공했습니다",
-                            token,
-                        });
+
+                        res.redirect("/auth/callback?token=" + token);
+                        // return res.status(200).json({
+                        //     message: "로그인이 성공했습니다",
+                        //     token,
+                        // });
                     }
                 });
             } else {
