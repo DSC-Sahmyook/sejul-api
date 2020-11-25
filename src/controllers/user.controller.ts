@@ -218,20 +218,20 @@ export const fetchFollowingUserAndSummaries = async (
         const { username } = req.params;
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
-        
+
         // 팔로우하는 사용자 목록 가져오기
         const userFollowingList = (
             await Models.User.findOne({
-            username: username
+                username: username
             })
         ).following;
 
         // 팔로우 하는 유저가 존재한다면
-        if(userFollowingList.length > 0) {
+        if (userFollowingList.length > 0) {
             // 팔로우하는 사용자들의 모든 글 가져오기
             const userFollowingSummaryData = await Models.Summary.aggregate([
                 {
-                    $match: {user: {$in: userFollowingList}}
+                    $match: { user: { $in: userFollowingList } }
                 },
                 {
                     $sort: { createdAt: -1 },
@@ -245,11 +245,11 @@ export const fetchFollowingUserAndSummaries = async (
             ]);
 
             const result = {
-                users : userFollowingList ,                // 사용자들
-                summary : {
-                    currentPage : page,                    // 요청한 현재 페이지 
-                    data : userFollowingSummaryData,       // 해당 페이지의 갯수?? 해당 페이지의 data?
-                    total : userFollowingList.length       // 이 경우에 해당하는 모든 글의 갯수
+                users: userFollowingList,                // 사용자들
+                summary: {
+                    currentPage: page,                    // 요청한 현재 페이지 
+                    data: userFollowingSummaryData,       // 해당 페이지의 갯수?? 해당 페이지의 data?
+                    total: userFollowingList.length       // 이 경우에 해당하는 모든 글의 갯수
                 }
             }
             res.status(200).json(result);
@@ -366,7 +366,42 @@ export const fetchFollowingHashtagAndSummaries = async (
 
 export const followUser = async (req: Request, res: Response) => {
     try {
-        // 코드
+        //현재 사용자 : req.params.username
+        //팔로우할 사용자 : req.body.username
+
+        //팔로우하는 사용자 목록
+        const userFollowingList = (
+            await Models.User.findOne({
+                username: req.params.username,
+            })
+        ).following;
+
+        if (req.user !== null && req.user !== undefined) {
+            if (req.body.user !== null && req.body.user !== undefined) {
+                let alreadyFollowUser = false;
+                req.user.following.forEach((item) => {
+                    if (item._id === req.body.user._id) {
+                        alreadyFollowUser = true;
+                    }
+                });
+
+                if (alreadyFollowUser) {
+                    //이미 팔로우 중이라면
+                    throw new Error("이미 팔로우 중입니다.");
+                } else {
+                    //팔로우 중이 아니라면
+                    req.user.following.push(req.body.user);
+
+                    await req.user.save();
+
+                    res.status(201).json({
+                        message: "추가되었습니다",
+                    });
+                }
+            }
+        } else {
+            throw new Error("사용자가 존재하지 않습니다.");
+        }
     } catch (e) {
         res.status(500).json({
             message: "조회 중 오류가 발생했습니다",
@@ -377,23 +412,69 @@ export const followUser = async (req: Request, res: Response) => {
 
 export const unFollowUser = async (req: Request, res: Response) => {
     try {
-        // 코드
-    } catch (e) {
-        res.status(500).json({
-            message: "조회 중 오류가 발생했습니다",
-            error: e.message,
-        });
+        //현재 사용자 : req.params.username
+        //팔로우할 사용자 : req.body.username
+
+        //팔로우하는 사용자 목록
+        const userFollowingList = (
+            await Models.User.findOne({
+                _id: req.user._id,
+            })
+        ).following;
+
+        if (req.user !== null && req.user !== undefined) {
+            if (req.body.user !== null && req.body.user !== undefined) {
+                let alreadyFollowUser = false;
+                req.user.following.forEach((item) => {
+                    if (item._id === req.body.user._id) {
+                        alreadyFollowUser = true;
+                    }
+                });
+
+                if (alreadyFollowUser) {
+                    //이미 팔로우 중이라면
+                    await Models.User.updateOne(
+                        {
+                            _id: req.user._id,
+                        },
+                        {
+                            $pull: {
+                                following: req.body.user,
+                            }, //삭제
+                        }
+                    )
+                };
+
+                await req.user.save();
+
+                res.status(201).json({
+                    message: "삭제되었습니다",
+                });
+                 }     else {
+                //following에 없다면
+                throw new Error("이미 삭제된 팔로워입니다."); //삭제하지 않음
+            }
+        }
+     else {
+        throw new Error("사용자가 존재하지 않습니다.");
     }
+}
+    catch (e) {
+    res.status(500).json({
+        message: "조회 중 오류가 발생했습니다",
+        error: e.message,
+    });
+}
 };
 
 export const UserArticles = async (req: Request, res: Response) => {
     try {
-        const {username} = req.params;
+        const { username } = req.params;
         const page = Number(req.query.page) || 1;
         const cnt = Number(req.query.cnt) || 15;
-        
+
         //사용자의 기사=user.articles
-        
+
         const fetchUserArticles = await Models.User.aggregate([
             {
                 // 모든 데이터 갯수를 가져오기 위해서 분리
@@ -435,10 +516,10 @@ export const UserArticles = async (req: Request, res: Response) => {
 
         if (username) {
             const result = {
-                data : fetchUserArticles,
-                currentPage : page,
-                total : fetchUserArticles.length,
-              }
+                data: fetchUserArticles,
+                currentPage: page,
+                total: fetchUserArticles.length,
+            }
             res.status(200).json(result);
         } else {
             throw new Error("사용자가 존재하지 않습니다");
