@@ -57,7 +57,15 @@ export const searchInSummary = async (req: Request, res: Response) => {
             })
             .populate("hashtags");
 
-        res.json(result);
+        const resultCount = await Models.Summary.find({
+            content: { $regex: `.*${search}.*` },
+        });
+
+        res.json({
+            page: page,
+            data: result,
+            count: resultCount.length,
+        });
     } catch (e) {
         const _error: IAPIError = {
             displayMessage: "조회 중 오류가 발생했습니다",
